@@ -22,7 +22,21 @@ mkdir -p netlify/functions
 
 # Copy any necessary files for serverless functions
 echo "Processing Netlify functions..."
-# Add any specific processing for functions here if needed
+# Rename any .js files in netlify/functions to .cjs to ensure proper CommonJS handling
+for file in netlify/functions/*.js; do
+  if [ -f "$file" ]; then
+    echo "Converting $file to CommonJS (.cjs) format"
+    base_name=$(basename "$file" .js)
+    mv "$file" "netlify/functions/${base_name}.cjs"
+  fi
+done
+
+# Make sure we don't have any incompatible ESM/CJS mix
+echo "Checking for API functions..."
+if [ -f "netlify/functions/api.ts" ]; then
+  echo "Backing up api.ts to avoid ESM/CJS conflicts"
+  mv netlify/functions/api.ts netlify/functions/api.ts.backup
+fi
 
 echo "Build completed successfully!"
 echo "To deploy to Netlify, use:"

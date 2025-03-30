@@ -120,7 +120,9 @@ If Netlify Functions are not working:
 1. Check the function logs in the Netlify dashboard
 2. Verify the `netlify.toml` configuration
 3. Make sure your API routes match what the client is calling
-4. The project now uses `api-standalone.js` for serverless functions to avoid ESM/CJS compatibility issues
+4. The project now uses `api-standalone.cjs` for serverless functions to avoid ESM/CJS compatibility issues
+   - This file uses CommonJS format (.cjs extension) to be compatible with Node.js module system
+   - API routes should point to `/.netlify/functions/api-standalone.cjs` in production
 
 ### Build Errors
 
@@ -129,10 +131,14 @@ If your deployment fails to build:
 1. Check the build logs for errors
 2. Make sure all dependencies are correctly specified in package.json
 3. Verify your build script and publish directory settings
-4. If you encounter "Top-level await" errors:
-   - These are fixed by using the CommonJS function in `api-standalone.js`
-   - The netlify.toml already includes the proper configuration to handle this
-5. If you see dependency errors (like missing @babel/preset-typescript):
+4. ESM/CJS Compatibility Issues:
+   - If you see "Top-level await is not supported with 'cjs' output format" errors:
+     - These are fixed by using the CommonJS function in `api-standalone.cjs`
+     - The `.cjs` extension tells Node.js to use CommonJS module format
+     - The original api.ts file has been renamed to avoid build conflicts
+   - If you see "CommonJS 'exports' variable treated as global" warnings:
+     - These are expected and don't affect functionality when using .cjs extension
+5. If you see dependency errors (like missing @babel/preset-typescript or lightningcss):
    - These dependencies are now explicitly installed in the build process
    - The build-for-netlify.sh script handles installing these dependencies
 

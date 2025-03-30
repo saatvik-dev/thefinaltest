@@ -1,4 +1,5 @@
 // This is a standalone Netlify function that avoids import.meta issues
+// Uses the .cjs extension to properly signal it's a CommonJS module
 const express = require('express');
 const serverless = require('serverless-http');
 const { Pool } = require('pg');
@@ -108,4 +109,7 @@ app.use((err, req, res, next) => {
 });
 
 // Export the serverless handler
-exports.handler = serverless(app);
+// Using module.exports for CommonJS compatibility
+module.exports = {
+  handler: serverless(app)
+};
