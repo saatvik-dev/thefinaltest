@@ -54,9 +54,22 @@ netlify env:set NODE_ENV "production"
 
 ### Step 6: Push Database Schema
 
+There are multiple ways to deploy your database schema:
+
+**Option 1: Push schema directly from your machine**
 ```bash
+# Make sure DATABASE_URL is set correctly in your .env file
 npm run db:push
 ```
+
+**Option 2: Use the built-in migration function after deployment**
+```bash
+# Invoke the db-migrate function through Netlify CLI
+netlify functions:invoke db-migrate --no-identity
+```
+
+**Option 3: Automatic migrations during build**
+If you've set DATABASE_URL in your Netlify environment variables, the build-for-netlify.sh script will automatically attempt to run migrations during deployment.
 
 ## Option 2: Deploy via Netlify Dashboard
 
@@ -90,7 +103,7 @@ npm run db:push
    ```bash
    netlify login
    netlify link
-   npm run db:push
+   netlify functions:invoke db-migrate --no-identity
    ```
 
 ## Verifying Your Deployment
@@ -112,6 +125,20 @@ If you encounter database connection errors:
 2. Make sure your database accepts connections from Netlify's IPs
 3. If using Neon/Supabase, ensure you've enabled SSL connections
 4. Check if your database requires a specific connection string format
+
+### Database Migration Issues
+
+If you're encountering "ECONNREFUSED" errors when running `db:push`:
+
+1. **Local machine errors**: 
+   - If running locally, ensure your PostgreSQL server is running on the expected port
+   - Update your .env file with the correct DATABASE_URL
+   - For cloud databases, make sure your local IP is allowed in the database firewall settings
+
+2. **Netlify environment errors**:
+   - Check the DATABASE_URL in Netlify environment variables
+   - Use the built-in migration function: `netlify functions:invoke db-migrate --no-identity`
+   - Check the function logs in Netlify dashboard for detailed error messages
 
 ### Function Errors
 

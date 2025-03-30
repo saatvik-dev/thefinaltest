@@ -38,6 +38,22 @@ if [ -f "netlify/functions/api.ts" ]; then
   mv netlify/functions/api.ts netlify/functions/api.ts.backup
 fi
 
+# Attempt to run database migrations if DATABASE_URL is set
+if [ -n "$DATABASE_URL" ]; then
+  echo "Database URL found, attempting to run migrations..."
+  npx drizzle-kit push
+  
+  if [ $? -eq 0 ]; then
+    echo "✅ Database migrations completed successfully"
+  else
+    echo "⚠️ Database migrations failed, you will need to run them manually"
+    echo "   After deployment, use: netlify functions:invoke db-migrate --no-identity"
+  fi
+else
+  echo "No DATABASE_URL found, skipping migrations"
+  echo "You will need to set DATABASE_URL in Netlify environment variables"
+fi
+
 echo "Build completed successfully!"
 echo "To deploy to Netlify, use:"
 echo "  netlify deploy --prod"
