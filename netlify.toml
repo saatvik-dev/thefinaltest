@@ -5,10 +5,12 @@
 
 [functions]
   node_bundler = "esbuild"
+  # You might consider cleaning up this list later, but removing the block below is the priority
   external_node_modules = ["express", "pg-native", "@babel/preset-typescript", "lightningcss", "vite", "@vitejs/plugin-react", "@replit/vite-plugin-shadcn-theme-json", "@replit/vite-plugin-runtime-error-modal", "@replit/vite-plugin-cartographer"]
 
-[functions."api-standalone.cjs"]
-  included_files = ["server/**", "shared/**", "client/**", "dist/**"]
+# This section has been removed:
+# [functions."api-standalone.cjs"]
+#   included_files = ["server/**", "shared/**", "client/**", "dist/**"]
 
 [build.environment]
   NODE_VERSION = "18"
