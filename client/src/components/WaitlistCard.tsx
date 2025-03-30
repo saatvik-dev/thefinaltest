@@ -47,17 +47,11 @@ const WaitlistCard: React.FC = () => {
   };
   
   return (
-    <div className="bg-white rounded-xl shadow-md p-8 w-full max-w-md animate-slide-up">
-      <div className="flex justify-center mb-6">
-        <KledeLogo />
-      </div>
-      
-      <h1 className="text-center text-xl font-medium text-gray-700 mb-6">
-        Join the waitlist for exclusive access to our upcoming collection
-      </h1>
+    <div className="w-full max-w-md">
+      <KledeLogo />
       
       {!isSuccess ? (
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 mt-8">
           <div>
             <div className="relative">
               <input 
@@ -90,10 +84,10 @@ const WaitlistCard: React.FC = () => {
           </button>
         </form>
       ) : (
-        <div className="text-center py-4 animate-fade-in">
+        <div className="text-center py-4 animate-fade-in mt-8">
           <CheckCircle className="mx-auto h-12 w-12 text-green-500" />
           <h2 className="mt-3 text-xl font-medium text-gray-900">You're on the list!</h2>
-          <p className="mt-2 text-gray-600">We'll notify you when our collection launches.</p>
+          <p className="mt-2 text-gray-600">We'll notify you when we launch.</p>
         </div>
       )}
     </div>
