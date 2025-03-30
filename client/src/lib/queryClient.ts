@@ -10,20 +10,28 @@ async function throwIfResNotOk(res: Response) {
 /**
  * Helper function to get the correct API URL for both development and production
  * In development, API calls go directly to the path
- * In production on Vercel, we need to use the deployed URL
+ * In production on Netlify, API calls go to /.netlify/functions/api
  */
 function getApiUrl(path: string): string {
+  // Make sure path starts with a slash and remove any leading 'api'
+  const normalizedPath = path.startsWith('/') ? path : `/${path}`;
+  
   // If running in a browser and we're in production
   if (typeof window !== 'undefined' && import.meta.env.PROD) {
-    // Get the current hostname (hostname will be the deployed Vercel domain)
     const baseUrl = window.location.origin;
-    // Make sure path starts with a slash
-    const normalizedPath = path.startsWith('/') ? path : `/${path}`;
+    
+    // For API paths, remap to Netlify Functions path
+    if (normalizedPath.startsWith('/api/')) {
+      // Change /api/something to /.netlify/functions/api/something
+      return `${baseUrl}/.netlify/functions/api${normalizedPath.substring(4)}`;
+    }
+    
+    // For non-API paths, just use the normal URL
     return `${baseUrl}${normalizedPath}`;
   }
   
   // In development mode, just use the path directly
-  return path;
+  return normalizedPath;
 }
 
 export async function apiRequest(

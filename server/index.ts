@@ -2,57 +2,68 @@ import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 
-const app = express();
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+// Create a function to setup the app instead of creating it at the top level
+function createExpressApp() {
+  const app = express();
+  app.use(express.json());
+  app.use(express.urlencoded({ extended: false }));
 
-// Add CORS headers for Vercel deployment
-app.use((req, res, next) => {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-  
-  if (req.method === 'OPTIONS') {
-    return res.status(200).end();
-  }
-  
-  next();
-});
-
-app.use((req, res, next) => {
-  const start = Date.now();
-  const path = req.path;
-  let capturedJsonResponse: Record<string, any> | undefined = undefined;
-
-  const originalResJson = res.json;
-  res.json = function (bodyJson, ...args) {
-    capturedJsonResponse = bodyJson;
-    return originalResJson.apply(res, [bodyJson, ...args]);
-  };
-
-  res.on("finish", () => {
-    const duration = Date.now() - start;
-    if (path.startsWith("/api")) {
-      let logLine = `${req.method} ${path} ${res.statusCode} in ${duration}ms`;
-      if (capturedJsonResponse) {
-        logLine += ` :: ${JSON.stringify(capturedJsonResponse)}`;
-      }
-
-      if (logLine.length > 80) {
-        logLine = logLine.slice(0, 79) + "…";
-      }
-
-      log(logLine);
+  // Add CORS headers for all deployments
+  app.use((req, res, next) => {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    
+    if (req.method === 'OPTIONS') {
+      return res.status(200).end();
     }
+    
+    next();
   });
 
-  next();
-});
+  // Add request logging
+  app.use((req, res, next) => {
+    const start = Date.now();
+    const path = req.path;
+    let capturedJsonResponse: Record<string, any> | undefined = undefined;
+
+    const originalResJson = res.json;
+    res.json = function (bodyJson, ...args) {
+      capturedJsonResponse = bodyJson;
+      return originalResJson.apply(res, [bodyJson, ...args]);
+    };
+
+    res.on("finish", () => {
+      const duration = Date.now() - start;
+      if (path.startsWith("/api")) {
+        let logLine = `${req.method} ${path} ${res.statusCode} in ${duration}ms`;
+        if (capturedJsonResponse) {
+          logLine += ` :: ${JSON.stringify(capturedJsonResponse)}`;
+        }
+
+        if (logLine.length > 80) {
+          logLine = logLine.slice(0, 79) + "…";
+        }
+
+        log(logLine);
+      }
+    });
+
+    next();
+  });
+  
+  return app;
+}
 
 // Create server setup function that can be called in different environments
-export async function createServer() {
+export async function createServer(options = { serverless: false }) {
+  // Create a new Express app for each server instance
+  const app = createExpressApp();
+  
+  // Register API routes
   const server = await registerRoutes(app);
 
+  // Add global error handler
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
     const status = err.status || err.statusCode || 500;
     const message = err.message || "Internal Server Error";
@@ -62,8 +73,8 @@ export async function createServer() {
   });
 
   // In serverless environments, we don't need Vite setup
-  if (process.env.VERCEL) {
-    // In serverless, just serve static files
+  if (options.serverless) {
+    // In serverless, just serve static files if needed
     serveStatic(app);
   } else {
     // Setup Vite in development or serve static in production
@@ -72,7 +83,7 @@ export async function createServer() {
       if (server) {
         await setupVite(app, server);
       } else {
-        // Fallback to static serving if no server (should not happen in regular mode)
+        // Fallback to static serving if no server
         serveStatic(app);
       }
     } else {
@@ -89,9 +100,9 @@ const isMainModule = import.meta.url.endsWith('/server/index.ts');
 
 if (isMainModule) {
   (async () => {
-    const { server } = await createServer();
+    const { app, server } = await createServer();
     
-    // Start server when running directly (not in Vercel)
+    // Start server when running directly (not in serverless environment)
     // Only attempt to listen if we have a server instance
     if (server) {
       const port = process.env.PORT || 5000;
@@ -108,5 +119,7 @@ if (isMainModule) {
   })();
 }
 
-// For Vercel deployment, export the Express app
-export default app;
+// Create a default app for direct imports
+// This is used by serverless functions
+const defaultApp = createExpressApp();
+export default defaultApp;

@@ -46,17 +46,48 @@ A sleek, minimalist waitlist platform designed for exclusive collection access.
 
 ## Deployment
 
-This project is configured for easy deployment to Vercel.
+This project is configured for easy deployment to Netlify.
 
-### Deploy to Vercel
+### Deploy to Netlify
 
-1. Run the deployment helper script:
+1. Install the Netlify CLI:
    ```
-   ./deploy-vercel.sh
+   npm install -g netlify-cli
    ```
-2. Follow the prompts to complete the deployment process.
 
-For detailed deployment instructions, refer to [VERCEL_DEPLOYMENT.md](VERCEL_DEPLOYMENT.md).
+2. Login to Netlify:
+   ```
+   netlify login
+   ```
+
+3. Initialize your Netlify site:
+   ```
+   netlify init
+   ```
+
+4. Build the project for Netlify:
+   ```
+   ./build-for-netlify.sh
+   ```
+
+5. Deploy to Netlify:
+   ```
+   netlify deploy --prod
+   ```
+
+6. Set up environment variables:
+   ```
+   netlify env:set DATABASE_URL "your-database-connection-string"
+   netlify env:set SESSION_SECRET "your-random-session-secret"
+   netlify env:set NODE_ENV "production"
+   ```
+
+7. Push the database schema:
+   ```
+   npm run db:push
+   ```
+
+For detailed deployment instructions, refer to [NETLIFY_DEPLOYMENT.md](NETLIFY_DEPLOYMENT.md).
 
 ## Admin Access
 
