@@ -47,12 +47,12 @@ const WaitlistCard: React.FC = () => {
   };
   
   return (
-    <div className="w-full max-w-md">
+    <div className="w-full max-w-md bg-transparent">
       <KledeLogo />
       
       {!isSuccess ? (
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 mt-8">
-          <h1 className="text-center text-2xl font-medium text-gray-700 mb-6">
+          <h1 className="text-center text-2xl font-medium text-white mb-6">
             Join the waitlist for exclusive access to our upcoming collection
           </h1>
           
@@ -60,27 +60,27 @@ const WaitlistCard: React.FC = () => {
             <div className="relative">
               <input 
                 type="email" 
-                className={`w-full px-4 py-3 border ${errors.email ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:ring-2 focus:ring-black focus:border-transparent outline-none transition-all`}
+                className={`w-full px-4 py-3 border ${errors.email ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:ring-2 focus:ring-white focus:border-transparent outline-none transition-all`}
                 placeholder="Enter your email"
                 {...register('email')}
                 disabled={mutation.isPending}
               />
             </div>
             {errors.email && (
-              <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>
+              <p className="text-red-400 text-sm mt-1">{errors.email.message}</p>
             )}
           </div>
           
           <button 
             type="submit" 
-            className="w-full bg-black text-white py-3 px-4 rounded-lg font-medium hover:bg-gray-800 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 disabled:opacity-70"
+            className="w-full bg-white text-black py-3 px-4 rounded-lg font-medium hover:bg-gray-200 transition-colors focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-black disabled:opacity-70"
             disabled={mutation.isPending}
           >
             {mutation.isPending ? (
               <span className="flex justify-center space-x-1">
-                <span className="loading-dot w-1.5 h-1.5 bg-white rounded-full"></span>
-                <span className="loading-dot w-1.5 h-1.5 bg-white rounded-full"></span>
-                <span className="loading-dot w-1.5 h-1.5 bg-white rounded-full"></span>
+                <span className="loading-dot w-1.5 h-1.5 bg-black rounded-full"></span>
+                <span className="loading-dot w-1.5 h-1.5 bg-black rounded-full"></span>
+                <span className="loading-dot w-1.5 h-1.5 bg-black rounded-full"></span>
               </span>
             ) : (
               "Join Waitlist"
@@ -89,9 +89,9 @@ const WaitlistCard: React.FC = () => {
         </form>
       ) : (
         <div className="text-center py-4 animate-fade-in mt-8">
-          <CheckCircle className="mx-auto h-12 w-12 text-green-500" />
-          <h2 className="mt-3 text-xl font-medium text-gray-900">You're on the list!</h2>
-          <p className="mt-2 text-gray-600">We'll notify you when we launch.</p>
+          <CheckCircle className="mx-auto h-12 w-12 text-green-400" />
+          <h2 className="mt-3 text-xl font-medium text-white">You're on the list!</h2>
+          <p className="mt-2 text-gray-300">We'll notify you when we launch.</p>
         </div>
       )}
     </div>

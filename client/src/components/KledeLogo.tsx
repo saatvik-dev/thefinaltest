@@ -7,7 +7,8 @@ const KledeLogo: React.FC = () => {
       <img 
         src={logoImage} 
         alt="Logo" 
-        className="h-40 w-auto object-contain"
+        className="h-64 w-auto object-contain"
+        style={{ filter: 'invert(1)' }} // Invert colors to make black logo visible on white background
       />
     </div>
   );
