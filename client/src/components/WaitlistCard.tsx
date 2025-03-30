@@ -51,7 +51,7 @@ const WaitlistCard: React.FC = () => {
       <KledeLogo />
       
       {!isSuccess ? (
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 mt-8">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 mt-2">
           <h1 className="text-center text-2xl font-medium text-white mb-6">
             Join the waitlist for exclusive access to our upcoming collection
           </h1>
