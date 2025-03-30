@@ -10,7 +10,7 @@ async function throwIfResNotOk(res: Response) {
 /**
  * Helper function to get the correct API URL for both development and production
  * In development, API calls go directly to the path
- * In production on Netlify, API calls go to /.netlify/functions/api
+ * In production on Netlify, API calls go to /.netlify/functions/api-standalone
  */
 function getApiUrl(path: string): string {
   // Make sure path starts with a slash and remove any leading 'api'
@@ -22,8 +22,8 @@ function getApiUrl(path: string): string {
     
     // For API paths, remap to Netlify Functions path
     if (normalizedPath.startsWith('/api/')) {
-      // Change /api/something to /.netlify/functions/api/something
-      return `${baseUrl}/.netlify/functions/api${normalizedPath.substring(4)}`;
+      // Change /api/something to /.netlify/functions/api-standalone/something
+      return `${baseUrl}/.netlify/functions/api-standalone${normalizedPath.substring(4)}`;
     }
     
     // For non-API paths, just use the normal URL

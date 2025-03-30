@@ -120,6 +120,7 @@ If Netlify Functions are not working:
 1. Check the function logs in the Netlify dashboard
 2. Verify the `netlify.toml` configuration
 3. Make sure your API routes match what the client is calling
+4. The project now uses `api-standalone.js` for serverless functions to avoid ESM/CJS compatibility issues
 
 ### Build Errors
 
@@ -128,6 +129,12 @@ If your deployment fails to build:
 1. Check the build logs for errors
 2. Make sure all dependencies are correctly specified in package.json
 3. Verify your build script and publish directory settings
+4. If you encounter "Top-level await" errors:
+   - These are fixed by using the CommonJS function in `api-standalone.js`
+   - The netlify.toml already includes the proper configuration to handle this
+5. If you see dependency errors (like missing @babel/preset-typescript):
+   - These dependencies are now explicitly installed in the build process
+   - The build-for-netlify.sh script handles installing these dependencies
 
 ## Custom Domains
 

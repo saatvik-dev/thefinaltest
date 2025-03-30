@@ -1,0 +1,140 @@
+Netlify Build                                                 
+8:03:12 PM: ────────────────────────────────────────────────────────────────
+8:03:12 PM: ​
+8:03:12 PM: ❯ Version
+8:03:12 PM:   @netlify/build 30.0.6
+8:03:12 PM: ​
+8:03:12 PM: ❯ Flags
+8:03:12 PM:   accountId: 67e9411ba0eeb0a7406c13f0
+8:03:12 PM:   baseRelDir: true
+8:03:12 PM:   buildId: 67e955fb0789ea38cea55d61
+8:03:12 PM:   deployId: 67e955fb0789ea38cea55d63
+8:03:12 PM: ​
+8:03:12 PM: ❯ Current directory
+8:03:12 PM:   /opt/build/repo
+8:03:12 PM: ​
+8:03:12 PM: ❯ Config file
+8:03:12 PM:   /opt/build/repo/netlify.toml
+8:03:12 PM: ​
+8:03:12 PM: ❯ Context
+8:03:12 PM:   production
+8:03:12 PM: ​
+8:03:12 PM: build.command from netlify.toml                               
+8:03:12 PM: ────────────────────────────────────────────────────────────────
+8:03:12 PM: ​
+8:03:12 PM: $ bash ./build-for-netlify.sh
+8:03:12 PM: Building for Netlify deployment...
+8:03:12 PM: Installing dependencies...
+8:03:16 PM: npm warn deprecated @esbuild-kit/esm-loader@2.6.5: Merged into tsx: https://tsx.is
+8:03:16 PM: npm warn deprecated @esbuild-kit/core-utils@3.3.2: Merged into tsx: https://tsx.is
+8:03:20 PM: added 497 packages, and audited 498 packages in 8s
+8:03:20 PM: 63 packages are looking for funding
+8:03:20 PM:   run `npm fund` for details
+8:03:21 PM: 8 moderate severity vulnerabilities
+8:03:21 PM: To address issues that do not require attention, run:
+8:03:21 PM:   npm audit fix
+8:03:21 PM: To address all issues (including breaking changes), run:
+8:03:21 PM:   npm audit fix --force
+8:03:21 PM: Run `npm audit` for details.
+8:03:21 PM: Ensuring build dependencies are installed...
+8:03:21 PM: npm warn idealTree Removing dependencies.@babel/preset-typescript in favor of devDependencies.@babel/preset-typescript
+8:03:21 PM: npm warn idealTree Removing dependencies.lightningcss in favor of devDependencies.lightningcss
+8:03:22 PM: up to date, audited 498 packages in 1s
+8:03:22 PM: 63 packages are looking for funding
+8:03:22 PM:   run `npm fund` for details
+8:03:22 PM: 8 moderate severity vulnerabilities
+8:03:22 PM: To address issues that do not require attention, run:
+8:03:22 PM:   npm audit fix
+8:03:22 PM: To address all issues (including breaking changes), run:
+8:03:22 PM:   npm audit fix --force
+8:03:22 PM: Run `npm audit` for details.
+8:03:22 PM: Building client...
+8:03:22 PM: > rest-express@1.0.0 build
+8:03:22 PM: > vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist
+8:03:22 PM: vite v5.4.14 building for production...
+8:03:22 PM: transforming...
+8:03:26 PM: ✓ 2122 modules transformed.
+8:03:26 PM: rendering chunks...
+8:03:26 PM: computing gzip size...
+8:03:26 PM: ../dist/public/index.html                   1.60 kB │ gzip:   0.63 kB
+8:03:26 PM: ../dist/public/assets/logo-CPR2wPqK.png     6.97 kB
+8:03:26 PM: ../dist/public/assets/index-BO9M_nxt.css   61.95 kB │ gzip:  11.05 kB
+8:03:26 PM: ../dist/public/assets/index-BHVowUgO.js   436.82 kB │ gzip: 133.71 kB
+8:03:26 PM: ✓ built in 3.54s
+8:03:26 PM:   dist/index.js  25.2kb
+8:03:26 PM: ⚡ Done in 4ms
+8:03:26 PM: Preparing Netlify functions directories...
+8:03:26 PM: Processing Netlify functions...
+8:03:26 PM: Build completed successfully!
+8:03:26 PM: To deploy to Netlify, use:
+8:03:27 PM: Failed during stage 'building site': Build script returned non-zero exit code: 2 (https://ntl.fyi/exit-code-2)
+8:03:26 PM:   netlify deploy --prod
+8:03:26 PM: Remember to set the DATABASE_URL and SESSION_SECRET in Netlify environment variables.
+8:03:26 PM: ​
+8:03:26 PM: (build.command completed in 13.7s)
+8:03:26 PM: ​
+8:03:26 PM: Functions bundling                                            
+8:03:26 PM: ────────────────────────────────────────────────────────────────
+8:03:26 PM: ​
+8:03:26 PM: Packaging Functions from netlify/functions directory:
+8:03:26 PM:  - api.ts
+8:03:26 PM: ​
+8:03:26 PM: ▲ [WARNING] "import.meta" is not available with the "cjs" output format and will be empty [empty-import-meta]
+8:03:26 PM:     server/vite.ts:6:33:
+8:03:26 PM:       6 │ const __filename = fileURLToPath(import.meta.url);
+8:03:26 PM:         ╵                                  ~~~~~~~~~~~
+8:03:26 PM:   You need to set the output format to "esm" for "import.meta" to work correctly.
+8:03:26 PM: ▲ [WARNING] "import.meta" is not available with the "cjs" output format and will be empty [empty-import-meta]
+8:03:26 PM:     vite.config.ts:8:33:
+8:03:26 PM:       8 │ const __filename = fileURLToPath(import.meta.url);
+8:03:26 PM:         ╵                                  ~~~~~~~~~~~
+8:03:26 PM:   You need to set the output format to "esm" for "import.meta" to work correctly.
+8:03:26 PM: ✘ [ERROR] Top-level await is currently not supported with the "cjs" output format
+8:03:26 PM:     vite.config.ts:19:10:
+8:03:26 PM:       19 │           await import("@replit/vite-plugin-cartographer").then((m...
+8:03:26 PM:          ╵           ~~~~~
+8:03:26 PM: ▲ [WARNING] "esbuild" should be marked as external for use with "require.resolve" [require-resolve-not-external]
+8:03:26 PM:     node_modules/vite/node_modules/esbuild/lib/main.js:1653:36:
+8:03:26 PM:       1653 │   const libMainJS = require.resolve("esbuild");
+8:03:26 PM:            ╵                                     ~~~~~~~~~
+8:03:27 PM: ​
+8:03:27 PM: Bundling of function "api" failed                             
+8:03:27 PM: ────────────────────────────────────────────────────────────────
+8:03:27 PM: ​
+8:03:27 PM:   Error message
+8:03:27 PM:   Build failed with 1 error:
+8:03:27 PM:   vite.config.ts:19:10: ERROR: Top-level await is currently not supported with the "cjs" output format
+8:03:27 PM: ​
+8:03:27 PM:   Error location
+8:03:27 PM:   While bundling function "api"
+8:03:27 PM: ​
+8:03:27 PM:   Resolved config
+8:03:27 PM:   build:
+8:03:27 PM:     command: bash ./build-for-netlify.sh
+8:03:27 PM:     commandOrigin: config
+8:03:27 PM:     environment:
+8:03:27 PM:       - DATABASE_URL
+8:03:27 PM:       - NODE_VERSION
+8:03:27 PM:       - NPM_FLAGS
+8:03:27 PM:     publish: /opt/build/repo/dist/public
+8:03:27 PM:     publishOrigin: config
+8:03:27 PM:   functions:
+8:03:27 PM:     '*':
+8:03:27 PM:       external_node_modules:
+8:03:27 PM:         - express
+8:03:27 PM:         - pg-native
+8:03:27 PM:         - '@babel/preset-typescript'
+8:03:27 PM:         - lightningcss
+8:03:27 PM:       node_bundler: esbuild
+8:03:27 PM:   functionsDirectory: /opt/build/repo/netlify/functions
+8:03:27 PM:   redirects:
+8:03:27 PM:     - from: /api/*
+      status: 200
+      to: /.netlify/functions/api/:splat
+    - from: /*
+      status: 200
+      to: /index.html
+  redirectsOrigin: config
+8:03:27 PM: Build failed due to a user error: Build script returned non-zero exit code: 2
+8:03:27 PM: Failing build: Failed to build site
+8:03:27 PM: Finished processing build request in 46.875s
