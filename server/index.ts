@@ -95,10 +95,10 @@ export async function createServer(options = { serverless: false }) {
 }
 
 // Run the server directly (not when imported as a module)
-// Using import.meta.url to detect if this is the main module
-const isMainModule = import.meta.url.endsWith('/server/index.ts');
-
-if (isMainModule) {
+// Check if this module is being run directly
+// Using require.main === module would be CJS syntax
+// For ESM compatibility, we check if this is not being imported
+if (process.env.TS_NODE_DEV === 'true' || process.argv[1]?.endsWith('server/index.ts')) {
   (async () => {
     const { app, server } = await createServer();
     
