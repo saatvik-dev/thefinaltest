@@ -27,22 +27,32 @@ const Admin: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   
-  const { data: authData } = useQuery({
+  // Check authentication status
+  const authQuery = useQuery<{isAuthenticated: boolean}>({
     queryKey: ['/api/admin/check'],
     queryFn: async () => {
       try {
+        console.log("Checking admin authentication...");
         const res = await checkAdminAuth();
+        console.log("Auth response:", res);
         const data = await res.json();
+        console.log("Auth data:", data);
         return data;
       } catch (error) {
+        console.error("Auth check error:", error);
         return { isAuthenticated: false };
       }
-    },
-    onSettled: (data) => {
-      setIsAuthenticated(data?.isAuthenticated || false);
-      setIsLoading(false);
     }
   });
+  
+  // Set authentication state when the query completes
+  useEffect(() => {
+    if (!authQuery.isPending) {
+      console.log("Auth query completed:", authQuery.data);
+      setIsAuthenticated(!!authQuery.data?.isAuthenticated);
+      setIsLoading(false);
+    }
+  }, [authQuery.isPending, authQuery.data]);
   
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
@@ -53,20 +63,49 @@ const Admin: React.FC = () => {
   });
   
   const loginMutation = useMutation({
-    mutationFn: (credentials: LoginFormValues) => {
-      return loginAdmin(credentials.username, credentials.password);
+    mutationFn: async (credentials: LoginFormValues) => {
+      console.log("Attempting login with:", { username: credentials.username });
+      try {
+        const response = await loginAdmin(credentials.username, credentials.password);
+        console.log("Login response:", response);
+        return response;
+      } catch (error) {
+        console.error("Login error:", error);
+        throw error;
+      }
     },
     onSuccess: async (response) => {
-      const data = await response.json();
-      if (data.success) {
-        setIsAuthenticated(true);
+      try {
+        console.log("Login succeeded, parsing response");
+        const data = await response.json();
+        console.log("Login data:", data);
+        
+        if (data.success) {
+          console.log("Setting authenticated state to true");
+          setIsAuthenticated(true);
+          toast({
+            title: "Login successful",
+            description: "Welcome to the admin dashboard",
+          });
+        } else {
+          console.log("Login response indicated failure");
+          toast({
+            title: "Login failed",
+            description: "Server returned unsuccessful response",
+            variant: "destructive",
+          });
+        }
+      } catch (error) {
+        console.error("Error parsing login response:", error);
         toast({
-          title: "Login successful",
-          description: "Welcome to the admin dashboard",
+          title: "Login error",
+          description: "Could not process server response",
+          variant: "destructive",
         });
       }
     },
     onError: (error: any) => {
+      console.error("Login mutation error:", error);
       toast({
         title: "Login failed",
         description: error.message || "Invalid credentials",
@@ -143,7 +182,11 @@ const Admin: React.FC = () => {
                 )}
               />
               
-              <Button type="submit" className="w-full" disabled={loginMutation.isPending}>
+              <Button 
+                type="submit" 
+                className="w-full transition-all duration-300 hover:bg-primary/90 hover:scale-[1.02] hover:shadow-md" 
+                disabled={loginMutation.isPending}
+              >
                 {loginMutation.isPending ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -154,7 +197,12 @@ const Admin: React.FC = () => {
                 )}
               </Button>
               
-              <Button variant="outline" type="button" className="w-full mt-2" onClick={() => setLocation('/')}>
+              <Button 
+                variant="outline" 
+                type="button" 
+                className="w-full mt-2 transition-all duration-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:scale-[1.02]" 
+                onClick={() => setLocation('/')}
+              >
                 Back to Home
               </Button>
             </form>
