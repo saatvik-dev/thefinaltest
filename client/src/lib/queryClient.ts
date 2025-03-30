@@ -7,12 +7,33 @@ async function throwIfResNotOk(res: Response) {
   }
 }
 
+/**
+ * Helper function to get the correct API URL for both development and production
+ * In development, API calls go directly to the path
+ * In production on Vercel, we need to use the deployed URL
+ */
+function getApiUrl(path: string): string {
+  // If running in a browser and we're in production
+  if (typeof window !== 'undefined' && import.meta.env.PROD) {
+    // Get the current hostname (hostname will be the deployed Vercel domain)
+    const baseUrl = window.location.origin;
+    // Make sure path starts with a slash
+    const normalizedPath = path.startsWith('/') ? path : `/${path}`;
+    return `${baseUrl}${normalizedPath}`;
+  }
+  
+  // In development mode, just use the path directly
+  return path;
+}
+
 export async function apiRequest(
   method: string,
   url: string,
   data?: unknown | undefined,
 ): Promise<Response> {
-  const res = await fetch(url, {
+  const apiUrl = getApiUrl(url);
+  
+  const res = await fetch(apiUrl, {
     method,
     headers: data ? { "Content-Type": "application/json" } : {},
     body: data ? JSON.stringify(data) : undefined,
@@ -29,7 +50,10 @@ export const getQueryFn: <T>(options: {
 }) => QueryFunction<T> =
   ({ on401: unauthorizedBehavior }) =>
   async ({ queryKey }) => {
-    const res = await fetch(queryKey[0] as string, {
+    // Get appropriate URL for the environment
+    const apiUrl = getApiUrl(queryKey[0] as string);
+    
+    const res = await fetch(apiUrl, {
       credentials: "include",
     });
 

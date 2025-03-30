@@ -26,29 +26,55 @@ if [ "$HAS_DB_URL" != "y" ]; then
     exit 0
 fi
 
+# Get database URL
+read -p "Enter your PostgreSQL DATABASE_URL: " DATABASE_URL
+
 # Check for session secret
 read -p "Do you have a session secret ready? (y/n): " HAS_SESSION_SECRET
 if [ "$HAS_SESSION_SECRET" != "y" ]; then
     echo "⚠️ You need a secure random string for SESSION_SECRET."
-    echo "   You can generate one at: https://1password.com/password-generator/"
-    echo ""
-    echo "   Please generate a secure string and come back."
-    exit 0
+    echo "   Generating a random session secret..."
+    SESSION_SECRET=$(openssl rand -base64 32)
+    echo "   Generated SESSION_SECRET: $SESSION_SECRET"
+else
+    read -p "Enter your SESSION_SECRET: " SESSION_SECRET
 fi
 
 echo ""
 echo "✅ Great! You have all the prerequisites ready."
 echo ""
+echo "🔄 Setting up environment variables..."
+
+# Set environment variables for Vercel
+echo "   - Setting DATABASE_URL"
+vercel env add DATABASE_URL production <<< "$DATABASE_URL"
+
+echo "   - Setting SESSION_SECRET"
+vercel env add SESSION_SECRET production <<< "$SESSION_SECRET"
+
+echo "   - Setting NODE_ENV"
+vercel env add NODE_ENV production <<< "production"
+
+echo ""
 echo "🔄 Running deployment with Vercel..."
 echo ""
 
 # Run Vercel command
-vercel
+vercel --yes
 
 echo ""
-echo "After deployment completes, run these commands to set up your database schema:"
-echo "   vercel env pull"
-echo "   npm run db:push"
+echo "🔄 Setting up database schema..."
+echo "   Running database push to create tables..."
+
+# Pull environment variables locally
+vercel env pull
+
+# Run database migrations
+echo "   - Running npm run db:push"
+npm run db:push
+
+echo ""
+echo "✅ Initial deployment completed!"
 echo ""
 echo "To deploy to production, run:"
 echo "   vercel --prod"
