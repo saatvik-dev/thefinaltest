@@ -1,25 +1,36 @@
 // Serverless function entry point for Vercel
+import express from 'express';
+import { registerRoutes } from '../server/routes';
+import { db } from '../server/db';
 
-import { createServer } from '../server/index';
-import type { IncomingMessage, ServerResponse } from 'node:http';
+// Simple express app for serverless
+const app = express();
 
-// Initialize server
-const serverPromise = createServer();
-
-// Export serverless handler
-export default async function handler(
-  req: IncomingMessage, 
-  res: ServerResponse
-) {
-  const { app } = await serverPromise;
+// Add CORS headers for Vercel deployment
+app.use((req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
   
-  // Forward the request to Express app
-  return new Promise<void>((resolve, reject) => {
-    app(req, res, (err?: any) => {
-      if (err) {
-        return reject(err);
-      }
-      resolve();
-    });
-  });
-}
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
+  
+  next();
+});
+
+// Enable JSON parsing
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+
+// Initialize routes
+registerRoutes(app);
+
+// Express error handling
+app.use((err: any, req: any, res: any, next: any) => {
+  console.error(err.stack);
+  res.status(500).json({ message: 'Internal Server Error' });
+});
+
+// Vercel serverless handler
+export default app;

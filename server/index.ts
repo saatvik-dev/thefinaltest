@@ -61,11 +61,23 @@ export async function createServer() {
     console.error(err); // Log error instead of throwing
   });
 
-  // Setup Vite in development or serve static in production
-  if (process.env.NODE_ENV !== "production") {
-    await setupVite(app, server);
-  } else {
+  // In serverless environments, we don't need Vite setup
+  if (process.env.VERCEL) {
+    // In serverless, just serve static files
     serveStatic(app);
+  } else {
+    // Setup Vite in development or serve static in production
+    if (process.env.NODE_ENV !== "production") {
+      // Only setup Vite if we have a server instance
+      if (server) {
+        await setupVite(app, server);
+      } else {
+        // Fallback to static serving if no server (should not happen in regular mode)
+        serveStatic(app);
+      }
+    } else {
+      serveStatic(app);
+    }
   }
   
   return { app, server };
@@ -80,14 +92,19 @@ if (isMainModule) {
     const { server } = await createServer();
     
     // Start server when running directly (not in Vercel)
-    const port = process.env.PORT || 5000;
-    server.listen({
-      port,
-      host: "0.0.0.0",
-      reusePort: true,
-    }, () => {
-      log(`serving on port ${port}`);
-    });
+    // Only attempt to listen if we have a server instance
+    if (server) {
+      const port = process.env.PORT || 5000;
+      server.listen({
+        port,
+        host: "0.0.0.0",
+        reusePort: true,
+      }, () => {
+        log(`serving on port ${port}`);
+      });
+    } else {
+      log(`Server not created - possibly running in serverless mode`);
+    }
   })();
 }
 

@@ -26,7 +26,7 @@ const authenticateAdmin = (req: Request, res: Response, next: Function) => {
   }
 };
 
-export async function registerRoutes(app: Express): Promise<Server> {
+export async function registerRoutes(app: Express): Promise<Server | null> {
   // Configure session
   app.use(
     session({
@@ -215,6 +215,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // In Vercel serverless environment, return null instead of HTTP server
+  if (process.env.VERCEL) {
+    return null;
+  }
+  
+  // Create HTTP server for traditional environments
   const httpServer = createServer(app);
   return httpServer;
 }
