@@ -7,7 +7,7 @@ const KledeLogo: React.FC = () => {
       <img 
         src={logoImage} 
         alt="Logo" 
-        className="h-16 w-auto object-contain"
+        className="h-40 w-auto object-contain"
       />
     </div>
   );
